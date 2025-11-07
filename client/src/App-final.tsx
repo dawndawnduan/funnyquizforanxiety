@@ -284,6 +284,22 @@ function App() {
           }}>
             9道题 · 约2分钟
           </p>
+          {/* 访问统计 */}
+          <div style={{
+            marginTop: '40px',
+            fontSize: '12px',
+            color: '#cccccc',
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '20px'
+          }}>
+            <span>
+              访问量: <span id="busuanzi_value_site_pv">-</span>
+            </span>
+            <span>
+              访客数: <span id="busuanzi_value_site_uv">-</span>
+            </span>
+          </div>
         </div>
       </div>
     );
