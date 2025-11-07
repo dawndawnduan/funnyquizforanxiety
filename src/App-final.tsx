@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   const [page, setPage] = useState<'home' | 'quiz' | 'result'>('home');
@@ -226,7 +227,9 @@ function App() {
   // 首页
   if (page === 'home') {
     return (
-      <div style={{
+      <>
+        <Analytics />
+        <div style={{
         minHeight: '100vh',
         backgroundColor: '#ffffff',
         display: 'flex',
@@ -302,6 +305,7 @@ function App() {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
