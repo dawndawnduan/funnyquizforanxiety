@@ -27,14 +27,16 @@ interface Scores {
   speed: number;
 }
 
-enum PersonalityType {
-  LAID_BACK = 'I',
-  CONSERVATIVE = 'II',
-  IMPULSIVE = 'III',
-  AGGRESSIVE = 'IV',
-  BALANCED = 'V',
-  WANDERING = 'VI',
-}
+const PersonalityType = {
+  LAID_BACK: 'I',
+  CONSERVATIVE: 'II',
+  IMPULSIVE: 'III',
+  AGGRESSIVE: 'IV',
+  BALANCED: 'V',
+  WANDERING: 'VI',
+} as const;
+
+type PersonalityType = typeof PersonalityType[keyof typeof PersonalityType];
 
 // 权重映射
 const LEVEL_WEIGHTS = {

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { questions } from '../data/questions';
-import { UserAnswer, calculateScores, determinePersonalityType } from '../utils/calculator';
+import type { UserAnswer } from '../utils/calculator';
+import { calculateScores, determinePersonalityType } from '../utils/calculator';
 import { getPersonalityProfile } from '../data/personalities';
 
 const Quiz = () => {

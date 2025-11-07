@@ -137,7 +137,7 @@ const Result = () => {
               <span>优势资本</span>
             </h3>
             <ul className="space-y-2">
-              {profile.strengths.map((strength, index) => (
+              {profile.strengths.map((strength: string, index: number) => (
                 <motion.li
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
@@ -159,7 +159,7 @@ const Result = () => {
               <span>注意点</span>
             </h3>
             <ul className="space-y-2">
-              {profile.cautions.map((caution, index) => (
+              {profile.cautions.map((caution: string, index: number) => (
                 <motion.li
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
@@ -178,7 +178,7 @@ const Result = () => {
           <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-green-50 rounded-xl">
               <h4 className="font-bold mb-2 text-green-700">适合搭档</h4>
-              {profile.idealPartners.map((partner, index) => (
+              {profile.idealPartners.map((partner: string, index: number) => (
                 <p key={index} className="text-sm text-green-600">
                   • {partner}
                 </p>
@@ -186,7 +186,7 @@ const Result = () => {
             </div>
             <div className="p-4 bg-red-50 rounded-xl">
               <h4 className="font-bold mb-2 text-red-700">不太合适</h4>
-              {profile.unsuitablePartners.map((partner, index) => (
+              {profile.unsuitablePartners.map((partner: string, index: number) => (
                 <p key={index} className="text-sm text-red-600">
                   • {partner}
                 </p>
@@ -198,7 +198,7 @@ const Result = () => {
           <div className="mb-6">
             <h3 className="text-lg font-bold mb-3">🤝 协作使用说明</h3>
             <ul className="space-y-2">
-              {profile.collaboration.map((tip, index) => (
+              {profile.collaboration.map((tip: string, index: number) => (
                 <li key={index} className="text-sm text-gray-700">
                   • {tip}
                 </li>

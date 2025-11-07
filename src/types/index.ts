@@ -32,14 +32,16 @@ export interface Scores {
 }
 
 // 人格类型枚举
-export enum PersonalityType {
-  LAID_BACK = 'I',
-  CONSERVATIVE = 'II',
-  IMPULSIVE = 'III',
-  AGGRESSIVE = 'IV',
-  BALANCED = 'V',
-  WANDERING = 'VI',
-}
+export const PersonalityType = {
+  LAID_BACK: 'I',
+  CONSERVATIVE: 'II',
+  IMPULSIVE: 'III',
+  AGGRESSIVE: 'IV',
+  BALANCED: 'V',
+  WANDERING: 'VI',
+} as const;
+
+export type PersonalityType = typeof PersonalityType[keyof typeof PersonalityType];
 
 // 人格类型详情
 export interface PersonalityProfile {
