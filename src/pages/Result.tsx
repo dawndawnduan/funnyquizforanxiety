@@ -34,7 +34,19 @@ const Result = () => {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `${result?.profile.title}-测试结果.png`;
+
+      // 根据 personalityType 生成英文文件名
+      const typeNameMap: Record<string, string> = {
+        'I': 'laid-back',
+        'II': 'conservative',
+        'III': 'impulsive',
+        'IV': 'aggressive',
+        'V': 'balanced',
+        'VI': 'wandering'
+      };
+      const fileName = typeNameMap[result?.personalityType || ''] || 'result';
+      link.download = `${fileName}-poster.png`;
+
       link.href = url;
       link.click();
       window.URL.revokeObjectURL(url);
