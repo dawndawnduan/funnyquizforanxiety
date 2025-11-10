@@ -1,14 +1,13 @@
-// 内联类型定义
-interface ScoreModifier {
-  dimension: 'certainty' | 'speed';
-  level: 'high' | 'medium' | 'low';
-  points: number;
+// 简化后的类型定义
+interface ScoreValue {
+  certainty: number;  // 0-10 直接分数
+  speed: number;      // 0-10 直接分数
 }
 
 interface AnswerOption {
   id: string;
   text: string;
-  scores: ScoreModifier[];
+  scores: ScoreValue;
 }
 
 interface Question {
@@ -23,8 +22,8 @@ interface UserAnswer {
 }
 
 interface Scores {
-  certainty: number;
-  speed: number;
+  certainty: number;  // 百分比 0-100
+  speed: number;      // 百分比 0-100
 }
 
 const PersonalityType = {
@@ -38,22 +37,17 @@ const PersonalityType = {
 
 type PersonalityType = typeof PersonalityType[keyof typeof PersonalityType];
 
-// 权重映射
-const LEVEL_WEIGHTS = {
-  high: 3,
-  medium: 2,
-  low: 1,
-};
-
 /**
- * 计算用户的得分
+ * 计算用户的得分（简化版 - 动态最大值）
+ * 每道题直接累加分数，转换为百分比：(总分 / 理论最大值) × 100
+ * 理论最大值 = 每道题选项中的最高分之和
  */
 export const calculateScores = (
   answers: UserAnswer[],
   questions: Question[]
 ): Scores => {
-  let certaintyRaw = 0;
-  let speedRaw = 0;
+  let certaintyTotal = 0;
+  let speedTotal = 0;
   let certaintyMax = 0;
   let speedMax = 0;
 
@@ -64,21 +58,22 @@ export const calculateScores = (
     const selectedOption = question.options.find((opt) => opt.id === answer.answerId);
     if (!selectedOption) return;
 
-    selectedOption.scores.forEach((score: ScoreModifier) => {
-      const points = score.points;
-
-      if (score.dimension === 'certainty') {
-        certaintyRaw += LEVEL_WEIGHTS[score.level] * points;
-        certaintyMax += LEVEL_WEIGHTS.high * 2;
-      } else if (score.dimension === 'speed') {
-        speedRaw += LEVEL_WEIGHTS[score.level] * points;
-        speedMax += LEVEL_WEIGHTS.high * 2;
-      }
-    });
+    // 直接累加分数
+    certaintyTotal += selectedOption.scores.certainty;
+    speedTotal += selectedOption.scores.speed;
   });
 
-  const certainty = certaintyMax > 0 ? Math.round((certaintyRaw / certaintyMax) * 100) : 0;
-  const speed = speedMax > 0 ? Math.round((speedRaw / speedMax) * 100) : 0;
+  // 计算每道题的理论最大值（取所有选项中的最高分）
+  questions.forEach((question) => {
+    const maxCertainty = Math.max(...question.options.map(opt => opt.scores.certainty));
+    const maxSpeed = Math.max(...question.options.map(opt => opt.scores.speed));
+    certaintyMax += maxCertainty;
+    speedMax += maxSpeed;
+  });
+
+  // 转换为百分比
+  const certainty = certaintyMax > 0 ? Math.round((certaintyTotal / certaintyMax) * 100) : 0;
+  const speed = speedMax > 0 ? Math.round((speedTotal / speedMax) * 100) : 0;
 
   return {
     certainty: Math.min(100, Math.max(0, certainty)),
@@ -87,31 +82,37 @@ export const calculateScores = (
 };
 
 /**
- * 根据得分判定人格类型
+ * 根据得分判定人格类型（边界：45/55）
  */
 export const determinePersonalityType = (scores: Scores): PersonalityType => {
   const { certainty, speed } = scores;
 
-  if (certainty <= 40 && speed <= 40) {
+  // 躺平派：低确定性 + 低速度
+  if (certainty <= 45 && speed <= 45) {
     return PersonalityType.LAID_BACK;
   }
 
-  if (certainty >= 60 && speed <= 40) {
+  // 保守派：高确定性 + 低速度
+  if (certainty >= 55 && speed <= 45) {
     return PersonalityType.CONSERVATIVE;
   }
 
-  if (certainty <= 40 && speed >= 60) {
+  // 发泄派：低确定性 + 高速度
+  if (certainty <= 45 && speed >= 55) {
     return PersonalityType.IMPULSIVE;
   }
 
-  if (certainty >= 60 && speed >= 60) {
+  // 激进派：高确定性 + 高速度
+  if (certainty >= 55 && speed >= 55) {
     return PersonalityType.AGGRESSIVE;
   }
 
-  if (certainty > 40 && certainty < 60 && speed > 40 && speed < 60) {
+  // 平衡派：中等确定性 + 中等速度
+  if (certainty > 45 && certainty < 55 && speed > 45 && speed < 55) {
     return PersonalityType.BALANCED;
   }
 
+  // 游移派：其他所有情况
   return PersonalityType.WANDERING;
 };
 
@@ -123,5 +124,5 @@ export const calculateVariance = (scores: number[]): number => {
 };
 
 // 导出类型供其他文件使用
-export type { UserAnswer, Question, Scores, ScoreModifier, AnswerOption };
+export type { UserAnswer, Question, Scores, ScoreValue, AnswerOption };
 export { PersonalityType };
