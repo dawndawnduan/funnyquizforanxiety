@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import html2canvas from 'html2canvas';
+import { getPosterPath } from '../config/posters';
 
 // 内联TestResult类型
 interface TestResult {
@@ -14,7 +14,6 @@ const Result = () => {
   const navigate = useNavigate();
   const [result, setResult] = useState<TestResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const posterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const savedResult = sessionStorage.getItem('quizResult');
@@ -26,19 +25,19 @@ const Result = () => {
   }, [navigate]);
 
   const handleGeneratePoster = async () => {
-    if (!posterRef.current) return;
+    if (!posterPath) return;
 
     setIsGenerating(true);
     try {
-      const canvas = await html2canvas(posterRef.current, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-      });
-
+      // 直接下载海报图片
+      const response = await fetch(posterPath);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.download = `${result?.profile.title}-测试结果.png`;
-      link.href = canvas.toDataURL();
+      link.href = url;
       link.click();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('生成海报失败:', error);
     } finally {
@@ -53,19 +52,36 @@ const Result = () => {
 
   if (!result) return null;
 
-  const { scores, profile } = result;
+  const { scores, profile, personalityType } = result;
+  const posterPath = getPosterPath(personalityType);
 
   return (
     <div className="min-h-screen p-6 pb-24">
       <div className="max-w-2xl mx-auto">
-        {/* 结果卡片 */}
-        <motion.div
-          ref={posterRef}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white rounded-3xl shadow-2xl p-8 mb-6"
-        >
+        {/* 海报展示 */}
+        {posterPath && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-3xl shadow-2xl p-4 mb-6"
+          >
+            <img
+              src={posterPath}
+              alt={`${profile.title}测试结果`}
+              className="w-full h-auto rounded-2xl"
+            />
+          </motion.div>
+        )}
+
+        {/* 如果没有海报，显示基本信息 */}
+        {!posterPath && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-3xl shadow-2xl p-8 mb-6"
+          >
           {/* 头部 - 类型称号 */}
           <div className="text-center mb-8">
             <motion.div
@@ -233,6 +249,7 @@ const Result = () => {
             <p className="text-lg font-bold text-primary">"{profile.shareQuote}"</p>
           </div>
         </motion.div>
+        )}
 
         {/* 操作按钮 */}
         <div className="fixed bottom-6 left-6 right-6 max-w-2xl mx-auto flex gap-4">

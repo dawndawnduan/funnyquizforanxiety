@@ -60,7 +60,7 @@ const Home = () => {
           transition={{ delay: 0.8 }}
           className="mt-6 text-sm text-gray-400"
         >
-          9道题 · 约2分钟
+          9道题 · 约1分钟
         </motion.p>
       </motion.div>
 
