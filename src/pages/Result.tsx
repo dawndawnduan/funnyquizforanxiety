@@ -268,7 +268,7 @@ const Result = () => {
             disabled={isGenerating}
             className="btn-primary flex-1"
           >
-            {isGenerating ? '下载中...' : '下载海报'}
+            {isGenerating ? '保存中...' : '保存海报'}
           </motion.button>
         </div>
       </div>
