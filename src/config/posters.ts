@@ -4,12 +4,12 @@
  */
 
 export const POSTER_MAP: Record<string, string> = {
-  'I': '/posters/躺平派.png',      // 躺平派 LAID_BACK
-  'II': '/posters/保守派.png',     // 保守派 CONSERVATIVE
-  'III': '/posters/发泄派.png',    // 发泄派 IMPULSIVE
-  'IV': '/posters/激进派.png',     // 激进派 AGGRESSIVE
-  'V': '/posters/平衡派.png',      // 平衡派 BALANCED
-  'VI': '/posters/游移派.png',     // 游移派 WANDERING
+  'I': '/posters/laid-back.png',      // 躺平派 LAID_BACK
+  'II': '/posters/conservative.png',  // 保守派 CONSERVATIVE
+  'III': '/posters/impulsive.png',    // 发泄派 IMPULSIVE
+  'IV': '/posters/aggressive.png',    // 激进派 AGGRESSIVE
+  'V': '/posters/balanced.png',       // 平衡派 BALANCED
+  'VI': '/posters/wandering.png',     // 游移派 WANDERING
 };
 
 /**
